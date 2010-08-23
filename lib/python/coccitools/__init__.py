@@ -17,7 +17,19 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Coccitools.  If not, see <http://www.gnu.org/licenses/>.
 
+## @package coccitools
+#  Describe the list of available sub-commands for cocci dispatcher.
+#
+#
+# The module 'cocci_create' provides the 'create' sub-command. The 'create' sub-command is made to import C files or Cocci patchs. The original directory tree is keeped.
+#
+# The module 'cocci_delete' provides the 'delete' sub-command. The 'delete' sub-command deletes a cocci directory in the cocci tree or a project directory in the project tree.
+#
+# The module 'cocci_select' provides the 'select' sub-command. The 'select' sub-command serves to change values of the config file and save it.
+#
+# The module 'cocci_show' provides the 'show' sub-command. The 'show 'sub-command serves to show the available projects in the project tree of the cocci patch directories in the  cocci tree.
+
 from cocci_create import create
 from cocci_delete import delete
-from cocci_show import show
 from cocci_select import select
+from cocci_show import show

@@ -21,7 +21,9 @@ import sys, os, glob
 import argparse
 import shutil
 
-# ============================
+## Function called by the cocci module
+# @param params command line options/args of "cocci create"
+# @param config object ConfigParser which contains all features of configuration file "coccitools.conf"
 def create(params, config):
 
     #
@@ -48,9 +50,9 @@ def create(params, config):
         print "No option specified. End of programm."
         sys.exit(2)
 
-# ============================
-# Check if the source directory exists
-# ============================
+## Internal function which extracts all cocci files from a directory tree
+# @param path path of the source directory
+# @return list of cocci files
 def listdirectory(path):
     fichier=[]
     l = glob.glob(path + "/*")
@@ -67,17 +69,19 @@ def listdirectory(path):
     #
     return fichier
 
-# ============================
-# Check if the source directory exists
-# ============================
+## Internal function which cheks if the source directory exists. If not, the program ends
+# @param dir : the source directory
 def checkSource(dir):
      if( not os.path.isdir(dir) ):
         print "%s is not a directory" % dir
         sys.exit(2)
 
-# ============================
-#
-# ============================
+## Internal funciton which create a cocci directory in the cocci tree and imports the cocci files
+# @param destination the name of the new cocci directory
+# @param source the source directory which contains cocci files
+# @param isImportFiles boolean which specifies the use of symlinks on directories
+# @param isImportDirectories  which specifies the use of symlinks on files
+# @param path the path of the cocci tree
 def newCocci(destination, source, isImportFiles, isImportDirectories, path):
 
     checkSource(source)
@@ -124,10 +128,11 @@ def newCocci(destination, source, isImportFiles, isImportDirectories, path):
         else:
             os.symlink(source, dest_dir + "/link_cocci")
 
-
-# ============================
-#
-# ============================
+## Internal funciton which create a project directory in the cocci tree and imports the C files
+# @param destination the name of the new cocci directory
+# @param source the source directory which contains cocci files
+# @param isImportFiles boolean which specifies the use of symlinks on directories
+# @param config object config which contains the project path
 def newProject(destination, source, isImportFiles, config):
 
     checkSource(source)

@@ -19,9 +19,9 @@
 
 import sys, os, argparse
 
-# ============================
-# init
-# ============================
+## Function called by the cocci module
+# @param params command line options/args of "cocci select"
+# @param config object ConfigParser which contains all features of configuration file "coccitools.conf"
 def select(params, config):
 
     # Options and Arguements
@@ -39,9 +39,9 @@ def select(params, config):
         print "No option specified. End of programm."
         sys.exit(2)
 
-# ============================
-# Set Default Project
-# ============================
+## Internal function corresponding to the option '--default-project'
+# @param defaultProject specifies the new default project, if it exists.
+# @param config object ConfigParser which contains all features of configuration file "coccitools.conf"
 def setDefaultProject(defaultProject, config):
 
     project_path = config.get('Projects', 'project_path')

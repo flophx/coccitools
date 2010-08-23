@@ -25,7 +25,7 @@ sys.path.append(libpath)
 import coccitools, configuration
 import ConfigParser
 
-# ============================
+##============================
 # Start Program
 # ============================
 def main():

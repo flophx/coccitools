@@ -20,7 +20,9 @@
 import sys, os, glob
 import argparse
 
-# ====================================================
+## Function called by the cocci module
+# @param params command line options/args of "cocci show"
+# @param config object ConfigParser which contains all features of configuration file "coccitools.conf"
 def show(params, config):
 
     # Options and Arguements
@@ -50,9 +52,10 @@ def show(params, config):
         print "No option specified. End of programm."
         sys.exit(2)
 
-# ============================
-# Start Program
-# ============================
+## Internal function which displays the files inside the required directory. The display is "[i] directory". In case of display of the project tree, the displays is "[i] directory *" for the default project.
+# @param path path of cocci tree or project tree
+# @param list_directory list of directories to delete
+# @param config object ConfigParser which contains all features of configuration file "coccitools.conf"
 def displayDirectory(path, list_projects, config):
 
     #
@@ -83,9 +86,9 @@ def displayDirectory(path, list_projects, config):
             for _file in listDirectory(path_project):
                 print _file.split(path_project)[1]
 
-# ============================
-#
-# ============================
+## Internal function which extracts all files from a directory tree
+# @param path path of the source directory
+# @return list of files
 def listDirectory(path):
     fichier=[]
     l = glob.glob(path + "/*")

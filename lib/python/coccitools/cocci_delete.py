@@ -21,7 +21,9 @@ import os, sys
 import argparse
 import shutil
 
-# ====================================================
+## Function called by the cocci module
+# @param params command line options/args of "cocci delete"
+# @param config object ConfigParser which contains all features of configuration file "coccitools.conf"
 def delete(params, config):
 
     # Options and Arguements
@@ -46,9 +48,10 @@ def delete(params, config):
         print "No option specified. End of programm."
         sys.exit(2)
 
-# ============================
-# Delete directory
-# ============================
+## Internal function which deletes the required directory. If a project is deleted, the default project is set to empty if no project is available, or to another project. The config file is updated
+# @param path path of cocci tree or project tree
+# @param list_directory list of directories to delete
+# @param config object ConfigParser which contains all features of configuration file "coccitools.conf"
 def delDirectory(path, list_directory, config):
 
     #

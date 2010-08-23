@@ -20,8 +20,8 @@
 
 import os, ConfigParser
 
-# ============================
-# init
+## ============================
+# @param path: the installation path
 # ============================
 def initConfig(path):
 
