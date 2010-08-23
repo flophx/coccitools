@@ -25,9 +25,9 @@ sys.path.append(libpath)
 import coccitools, configuration
 import ConfigParser
 
-##============================
-# Start Program
-# ============================
+## The main command 'cocci' is the dispatcher of sub-commands for coccitools.
+#
+# This function checks if the sub-command exists and executes the corresponding subcommand. Otherwise, the program aborts .
 def main():
 
     #
@@ -48,17 +48,17 @@ def main():
             print "%s is not a coccitools-command" %  sys.argv[1]
             sys.exit(2)
 
-# ============================
-# Open Config File
-# ============================
+## Internal function that reads the configuration file "coccitools.conf"
+#
+# @return ConfigParser object
 def openConfig():
     config = ConfigParser.ConfigParser()
     config.read(homepath + 'coccitools.conf')
     return config
 
-# ============================
-# check if config file exists
-# ============================
+## Internal function that checks the existence of the configuration file "coccitools.conf"
+#
+# @param path the installation path of coccitools
 def checkConfigFile(path):
     #
     if not os.path.isfile(path + "coccitools.conf"):
