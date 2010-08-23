@@ -29,7 +29,9 @@
 #
 # The module 'cocci_show' provides the 'show' sub-command. The 'show 'sub-command serves to show the available projects in the project tree of the cocci patch directories in the  cocci tree.
 
+from cocci_check import check
 from cocci_create import create
 from cocci_delete import delete
 from cocci_select import select
 from cocci_show import show
+
