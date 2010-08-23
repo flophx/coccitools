@@ -20,9 +20,10 @@
 
 import os, ConfigParser
 
-## ============================
-# @param path: the installation path
-# ============================
+
+## Function called by the cocci module if the file "coccitools.conf" does not exist.
+#This function generates a "coccitools.conf" file that contains the features of the installation, the path of the cocci tree and  the path of the project tree.
+# @param path installation path of coccitools
 def initConfig(path):
 
     # When adding sections or items, add them in the reverse order of
