@@ -28,11 +28,8 @@ def create(params, config):
 
     #
     parser = argparse.ArgumentParser()
-    parser.add_argument('-G', '--no-import-files', dest='isImportFiles'
-                        , help='generate  symbolic link(s) for the specified source '
-                        ,  action='store_true')
-    parser.add_argument('-L', '--no-import-directories', dest='isImportDirectories'
-                        , help='generate a symbolic link for each files (cocci only)'
+    parser.add_argument('-L', '--use-symlink', dest='use_symlink'
+                        , help='generate a symbolic link instead of importing files from the directory'
                         ,  action='store_true')
     parser.add_argument('-P', '--project', dest='newProject', help='create new project', nargs=2)
     parser.add_argument('-C', '--cocci', dest='newCocci', help='create new cocci patchs directory', nargs=2)
@@ -41,10 +38,10 @@ def create(params, config):
 
     if args.newCocci is not None:
         cocci_path = config.get('Cocci', 'cocci_path')
-        newCocci(args.newCocci[0], args.newCocci[1], args.isImportFiles, args.isImportDirectories, cocci_path )
+        newCocci(args.newCocci[0], args.newCocci[1], args.use_symlink, cocci_path )
     #
     elif args.newProject is not None:
-        newProject(args.newProject[0], args.newProject[1], args.isImportFiles, config)
+        newProject(args.newProject[0], args.newProject[1], args.use_symlink, config)
     #
     else:
         print "No option specified. End of programm."
@@ -82,7 +79,7 @@ def checkSource(dir):
 # @param isImportFiles boolean which specifies the use of symlinks on directories
 # @param isImportDirectories  which specifies the use of symlinks on files
 # @param path the path of the cocci tree
-def newCocci(destination, source, isImportFiles, isImportDirectories, path):
+def newCocci(destination, source, use_symlink, path):
 
     checkSource(source)
     # Check if the directory contains cocci file
@@ -103,7 +100,7 @@ def newCocci(destination, source, isImportFiles, isImportDirectories, path):
         os.makedirs(dest_dir)
 
         #
-        if not isImportFiles:
+        if not use_symlink:
 
             # Create cocci files or symbolic link
             for cocci_file in cocci_files:
@@ -120,11 +117,7 @@ def newCocci(destination, source, isImportFiles, isImportDirectories, path):
                 if (not os.path.isdir(relative_destination_dir) ):
                     os.makedirs(relative_destination_dir)
 
-                #
-                if not isImportDirectories:
                     shutil.copyfile(cocci_file, relative_destination_dir + cocci_filename )
-                else:
-                    os.symlink(cocci_file, relative_destination_dir + "/" + cocci_filename )
         else:
             os.symlink(source, dest_dir + "/link_cocci")
 
@@ -133,7 +126,7 @@ def newCocci(destination, source, isImportFiles, isImportDirectories, path):
 # @param source the source directory which contains cocci files
 # @param isImportFiles boolean which specifies the use of symlinks on directories
 # @param config object config which contains the project path
-def newProject(destination, source, isImportFiles, config):
+def newProject(destination, source, use_symlink, config):
 
     checkSource(source)
 
@@ -145,7 +138,7 @@ def newProject(destination, source, isImportFiles, config):
 
     print "Create %s project" % destination
     # Create a directory with source file or symbolic link
-    if ( not isImportFiles ):
+    if  not use_symlink:
         shutil.copytree(source, dest_dir)
     else:
         os.makedirs(dest_dir)
