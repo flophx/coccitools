@@ -34,4 +34,4 @@ from cocci_create import create
 from cocci_delete import delete
 from cocci_select import select
 from cocci_show import show
-
+from cocci_metrics import metrics

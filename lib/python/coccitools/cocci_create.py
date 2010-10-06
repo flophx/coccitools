@@ -31,9 +31,24 @@ def create(params, config):
     parser.add_argument('-L', '--use-symlink', dest='use_symlink'
                         , help='generate a symbolic link instead of importing files from the directory'
                         ,  action='store_true')
-    parser.add_argument('-P', '--project', dest='newProject', help='create new project', nargs=2)
-    parser.add_argument('-C', '--cocci', dest='newCocci', help='create new cocci patchs directory', nargs=2)
+    parser.add_argument('-c', dest='cocci_files'
+                        , help='list of semantic patchs for generate project rules (only for -R/--rules option)'
+                        , nargs='*')
+    parser.add_argument('-p', dest='project'
+                        , help='existing project (only for -R/--rules option)'
+                        , nargs=1)
 
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-P', '--project', dest='newProject'
+                       , help='create new project'
+                       , nargs=2)
+    group.add_argument('-C', '--cocci', dest='newCocci'
+                       , help='create new cocci patchs directory'
+                       , nargs=2)
+    group.add_argument('-R', '--rules', dest='newRules'
+                      , help='create a set of rules for an existing project'
+                      , nargs=1)
+    #
     args = parser.parse_args(params)
 
     if args.newCocci is not None:
@@ -43,6 +58,8 @@ def create(params, config):
     elif args.newProject is not None:
         newProject(args.newProject[0], args.newProject[1], args.use_symlink, config)
     #
+    elif args.newRules is not None:
+        newRules(args.newRules[0], args.cocci_files, args.project, config)
     else:
         print "No option specified. End of programm."
         sys.exit(2)
@@ -151,3 +168,35 @@ def newProject(destination, source, use_symlink, config):
      # Writing our configuration file to 'example.cfg'
     with open(config.get('Environment', 'installation_path') + "coccitools.conf", 'wb') as configfile:
         config.write(configfile)
+
+def newRules(name, cocci_files, project, config):
+
+    cocci_tree_path = config.get('Cocci', 'cocci_path')
+    #check project
+    if project is None:
+        project = config.get('Projects', 'default_project')
+    #
+    else:
+        project_tree_path = config.get('Projects', 'project_path')
+        #
+        if os.path.isdir(project_tree_path + project[0]):
+            project = project_tree_path + project[0]
+        else:
+            print "project %s does not exist" %project[0]
+
+    #check rule file
+    if os.path.isfile(project + '/' + name + '.txt'):
+        print 'Cannot create %s.txt rules file: file exists.' % name
+    else:
+        f = open (project + '/' + name + '.txt', 'wb')
+        if cocci_files is None:
+            whole_cocci = listdirectory(cocci_tree_path)
+            #
+            for cocci_file in whole_cocci:
+                f.write(cocci_file.split(cocci_tree_path)[1] + '\n')
+        #
+        else:
+            for cocci_file in cocci_files:
+                f.write(cocci_file + '\n')
+
+        f.close()
