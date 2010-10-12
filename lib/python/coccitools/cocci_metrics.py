@@ -7,6 +7,7 @@
 # along with Coccitools.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
+import utils
 import sys, os, glob
 import re
 
@@ -42,7 +43,7 @@ def metrics(params, config):
 
     elif args.metricProject is not None:
 
-        project = build_project(config, args.metricProject)
+        project = utils.checkProject(config, args.metricProject[0])
         display_metrics(project, metrics_project(project, verbose), 1)
     else:
         print 'no file to apply metrics'
@@ -78,34 +79,19 @@ def display_metrics (c_file, results, verbose_mode):
     n_loc=results[0]
     n_bl=results[1]
     n_com=results[2]
-    per_bl= percent(n_bl, n_loc)
-    per_com= percent(n_com, n_loc)
+    per_bl= utils.percent(n_bl, n_loc)
+    per_com= utils.percent(n_com, n_loc)
 
     #
     if verbose_mode >=1 :
         print "%s : %s LOC with %s BL(%.1f%%) and %s comments(%.1f%%)" % (filename, n_loc, n_bl, per_bl, n_com, per_com)
-
-def build_project(config, project):
-    # Check if it is an existing project
-    project_tree_path = config.get('Projects', 'project_path')
-    if len(project) == 0:
-        return config.get('Projects', 'default_project')
-    else:
-        #
-         if os.path.isdir(project_tree_path + project[0]):
-             return project_tree_path + project[0]
-         #
-         else:
-             print "project %s does not exits" % project[0]
-             sys.exit(2)
-
 
 def metrics_project(project, verbose_mode):
 
     total_loc = 0
     total_bl = 0
     total_com = 0
-    p_files = listDirectory(project)
+    p_files = utils.listDirectory(project)
 
     #
     for p_file in p_files:
@@ -118,23 +104,6 @@ def metrics_project(project, verbose_mode):
 
     return total_loc, total_bl, total_com
 
-###
-def percent (num, denum):
-   return ((1.0 * num ) / denum ) * 100
 
-## Internal function which extracts all files from a directory tree
-# @param path path of the source directory
-# @return list of files
-def listDirectory(path):
-    fichier=[]
-    l = glob.glob(path + "/*")
 
-    #
-    for i in l:
-        if os.path.isdir(i):
-            fichier.extend(listDirectory(i))
-        else:
-            fichier.append(i)
-    #
-    return fichier
 
