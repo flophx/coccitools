@@ -149,7 +149,6 @@ def applyRulesOnProject(rules_file, config, project):
 
     # Command line
     for cocci_file in cocci_files:
-
         cocci_abspath = utils.checkCocciFile(cocci_tree_path, cocci_file)
         print cocci_abspath
         if cocci_abspath is not None:
@@ -157,3 +156,6 @@ def applyRulesOnProject(rules_file, config, project):
             subprocess.call(command_line, shell=True)
         else:
             print "%s is not a cocci file" % cocci_file
+
+def usage():
+    return '   check      Apply rules or cocci files to a project or C files'
