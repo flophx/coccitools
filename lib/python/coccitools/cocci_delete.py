@@ -80,3 +80,5 @@ def delDirectory(path, list_directory, config):
         with open(config.get('Environment', 'installation_path') + "coccitools.conf", 'wb') as configfile:
             config.write(configfile)
 
+def usage():
+    return '   delete     Delete projects, cocci directory, etc...'
