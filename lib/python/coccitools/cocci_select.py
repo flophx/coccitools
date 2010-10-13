@@ -57,3 +57,5 @@ def setDefaultProject(defaultProject, config):
          # Writing our configuration file to 'example.cfg'
         with open(config.get('Environment', 'installation_path') + "coccitools.conf", 'wb') as configfile:
             config.write(configfile)
+def usage():
+    return '   select     Manage the default configuration'
