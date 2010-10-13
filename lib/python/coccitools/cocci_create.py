@@ -200,3 +200,6 @@ def newRules(name, cocci_files, project, config):
                 f.write(cocci_file + '\n')
 
         f.close()
+
+def usage():
+    return '   create     Import C projects or cocci files directory and create file rules'
