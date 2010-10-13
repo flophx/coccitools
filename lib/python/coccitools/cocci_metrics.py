@@ -104,6 +104,7 @@ def metrics_project(project, verbose_mode):
 
     return total_loc, total_bl, total_com
 
-
+def usage():
+    return '   metrics    Return the code metrics of a project'
 
 
