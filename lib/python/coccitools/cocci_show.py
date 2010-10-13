@@ -101,3 +101,6 @@ def listDirectory(path):
             fichier.append(i)
     #
     return fichier
+
+def usage():
+    return '   show       Show files contained in Cocci and Projects directory '
