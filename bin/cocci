@@ -24,7 +24,7 @@ libpath =  homepath + "lib/python"
 sys.path.append(libpath)
 # import coccitools,
 import configuration, utils
-import ConfigParser
+import ConfigParser, argparse
 import coccitools
 
 ## The main command 'cocci' is the dispatcher of sub-commands for coccitools.
@@ -38,15 +38,20 @@ def main():
 
     #
     if len(sys.argv) == 1:
-        print "No coccitools-command selected"
+        _help()
+        sys.exit(2)
+    elif sys.argv[1] == '-h' or  sys.argv[1] == '--help':
+        _help()
+        sys.exit(2)
+    elif sys.argv[1] == '-v' or  sys.argv[1] == '--version':
+        print 'coccitools version 0.1'
         sys.exit(2)
     else:
         try:
             command = getattr(coccitools, sys.argv[1] )
             if callable(command):
                 command(sys.argv[2:], openConfig() )
-        except AttributeError, err:
-            print err
+        except AttributeError:
             print "%s is not a coccitools-command" %  sys.argv[1]
             sys.exit(2)
 
@@ -97,7 +102,6 @@ def checkCoccitoolsCommand(path):
 
     # Check entries
     for command in list_commands:
-        print command
         script_name = (os.path.basename(command)).split('.py')[0]
         command_name = script_name.split('cocci_')[1]
 
@@ -117,6 +121,27 @@ def checkCoccitoolsCommand(path):
     if isModified:
         reload(coccitools)
 
+
+def _help():
+    print 'usage: cocci -v/--version |COMMAND [ARGS] -h/--help'
+    print "\nThe list of coccitools command is:"
+    fd = open(libpath+ '/coccitools/__init__.py', 'r')
+    list_script = []
+    for line in fd:
+        if line.startswith('from'):
+            script_name=line.split(' ')[1]
+            list_script.append(script_name)
+    fd.close()
+
+    list_script.sort()
+    for script in list_script:
+        submodule = __import__('coccitools.' + script)
+        try:
+            print eval('coccitools.' + script  + '.usage()')
+        except AttributeError:
+            print 'Description of %s command not found' % script
+
+    print "\n Use 'cocci COMMAND -h/--help' to have more informations"
 
 # ============================
 # Start Program
