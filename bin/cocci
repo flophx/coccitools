@@ -17,13 +17,15 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Coccitools.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys, os
+import sys, os, py_compile
 
 homepath =  os.path.abspath(__file__).split('bin')[0]
 libpath =  homepath + "lib/python"
 sys.path.append(libpath)
-import coccitools, configuration
+# import coccitools,
+import configuration, utils
 import ConfigParser
+import coccitools
 
 ## The main command 'cocci' is the dispatcher of sub-commands for coccitools.
 #
@@ -64,10 +66,62 @@ def checkConfigFile(path):
     if not os.path.isfile(path + "coccitools.conf"):
         print "No coccitools config file. Create one."
         configuration.initConfig(path)
+##
+#
+#
+def checkCoccitoolsCommand(path):
+
+    # Get available coccitools commands
+    coccitools_path = path + '/coccitools/'
+    init_coccitools_path = coccitools_path + '__init__.py'
+    # cinit_coccitools_path = coccitools_path + '__init__.pyc'
+
+    list_commands = utils.listDirectory(coccitools_path)
+
+    filter_list_files = []
+    for command in list_commands:
+        if command.endswith('~') or command.endswith('.pyc') or command.endswith('__.py') or command.endswith('__.pyc') :
+           filter_list_files.append(command)
+
+    for ignore_files in filter_list_files:
+        list_commands.remove(ignore_files
+                             )
+    list_commands.sort()
+    # Get __init__.py entries
+    fd = open(init_coccitools_path, 'r')
+    list_import = []
+    for line in fd:
+        if line.startswith('from'):
+            list_import.append(line.strip())
+    fd.close()
+
+    # Check entries
+    for command in list_commands:
+        print command
+        script_name = (os.path.basename(command)).split('.py')[0]
+        command_name = script_name.split('cocci_')[1]
+
+        import_line = 'from ' + script_name + ' import ' + command_name
+
+        isModified = False
+        try:
+            index_list = list_import.index(import_line)
+        except ValueError:
+           print "%s does not exist, will be added" % command_name
+           fd = open(init_coccitools_path, 'a+')
+           fd.write(import_line + '\n')
+           fd.close()
+           isModified=True
+
+    # Reload Coccitools module to take into account the updates
+    if isModified:
+        reload(coccitools)
+
 
 # ============================
 # Start Program
 # ============================
 if __name__ == "__main__":
     checkConfigFile(homepath)
+    checkCoccitoolsCommand(libpath)
     main()
